@@ -2,39 +2,41 @@ package com.twitter;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.twitter.adapters.MyAdapter;
+import com.twitter.models.TweetData;
+
 
 public class TweetList extends Activity {
-
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_list);
-    }
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_tweet_list, menu);
-        return true;
-    }
+        TweetData myDataset[] = {new TweetData("@juzer10", "Juzer", "My First Tweet!")};
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        mAdapter = new MyAdapter(myDataset);
+        mRecyclerView.setAdapter(mAdapter);
 
-        return super.onOptionsItemSelected(item);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("YOLO");
+
     }
 }
