@@ -25,7 +25,7 @@ public class TweetList extends Activity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        TweetData myDataset[] = {new TweetData("@juzer10", "Juzer", "My First Tweet!")};
+        TweetData myDataset[] = {new TweetData("@juzer10", "Juzer", "My First Tweet!",R.drawable.ic_launcher,"2m" ), new TweetData("@juzer10", "Juzer", "My First Tweet!", R.drawable.ic_launcher,"4m")};
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);

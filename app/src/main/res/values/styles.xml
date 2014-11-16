@@ -1,8 +1,21 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Toolbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@color/primary</item>
+    </style>
+
+    <style name="TextTheme">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:paddingLeft">8dp</item>
+    </style>
+
+    <style name="SubtleTextTheme">
+        <item name="android:textColor">@color/grey</item>
     </style>
 
 </resources>
