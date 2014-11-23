@@ -12,6 +12,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 
+import com.twitter.models.Token;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -24,15 +26,13 @@ import twitter4j.conf.ConfigurationBuilder;
  * Created by juzer_000 on 11/20/2014.
  */
 public class Authentication extends Activity {
-    private static String CONSUMER_KEY = "auuz9m18pZ3hZo0qI7tWWlJvS";
-    private static String CONSUMER_SECRET = "62sEy7i9zjVJP9WSKBvXco5SRuOIBczwfuDjCPX9XIp50KRzE3";
 
     private static SharedPreferences preferences;
 
     static String PREFERENCE_NAME = "twitter_oauth";
     static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
     static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-    static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
+    static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
 
     static String CALLBACK_URL = "oauth://twitter";
 
@@ -85,8 +85,8 @@ public class Authentication extends Activity {
 
     private void loginToTwitter() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder.setOAuthConsumerKey(CONSUMER_KEY);
-        builder.setOAuthConsumerSecret(CONSUMER_SECRET);
+        builder.setOAuthConsumerKey(Token.CONSUMER_KEY);
+        builder.setOAuthConsumerSecret(Token.CONSUMER_SECRET);
         Configuration configuration = builder.build();
 
         TwitterFactory factory = new TwitterFactory(configuration);
@@ -116,8 +116,8 @@ public class Authentication extends Activity {
             Log.e("Twitter OAuth Token", "> " + accessToken.getToken());
 
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.setOAuthConsumerKey(CONSUMER_KEY);
-            builder.setOAuthConsumerSecret(CONSUMER_SECRET);
+            builder.setOAuthConsumerKey(Token.CONSUMER_KEY);
+            builder.setOAuthConsumerSecret(Token.CONSUMER_SECRET);
 
             String access_token = preferences.getString(PREF_KEY_OAUTH_TOKEN, "");
             String access_token_secret = preferences.getString(PREF_KEY_OAUTH_SECRET, "");
