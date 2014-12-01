@@ -1,6 +1,7 @@
 package com.twitter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 
 import com.twitter.adapters.MyAdapter;
 import com.twitter.models.TweetData;
+import com.twitter.services.GetTimelineTweetsService;
 
 
 public class TweetList extends Activity {
@@ -37,6 +39,9 @@ public class TweetList extends Activity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("YOLO");
+
+        Intent i = new Intent(TweetList.this, GetTimelineTweetsService.class);
+        startService(i);
 
     }
 }

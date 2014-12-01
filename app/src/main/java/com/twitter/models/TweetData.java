@@ -12,6 +12,10 @@ public class TweetData {
     private int userImage; //todo
     private String time;
 
+    public TweetData() {
+
+    }
+
     public TweetData(String username, String realName, String tweet, int userImage, String time) {
         this.realName = realName;
         this.username = username;

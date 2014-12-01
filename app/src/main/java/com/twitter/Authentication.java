@@ -1,6 +1,7 @@
 package com.twitter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -27,11 +28,9 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class Authentication extends Activity {
 
-    private static SharedPreferences preferences;
-
     static String PREFERENCE_NAME = "twitter_oauth";
-    static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
-    static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
+    public static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
+    public static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
     static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
 
     static String CALLBACK_URL = "oauth://twitter";
@@ -105,13 +104,17 @@ public class Authentication extends Activity {
         final String verifier = uri.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
 
         try {
+            SharedPreferences preferences = this.getSharedPreferences("Twitter", Context.MODE_PRIVATE);
             Authentication.this.accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
+
+            Log.i("s", accessToken.getToken() + "------" + accessToken.getTokenSecret()+"---"+accessToken.getScreenName());
 
             SharedPreferences.Editor e = preferences.edit();
             e.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
             e.putString(PREF_KEY_OAUTH_SECRET, accessToken.getTokenSecret());
             // e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
-            e.commit();
+            e.apply();
+
 
             Log.e("Twitter OAuth Token", "> " + accessToken.getToken());
 
@@ -119,13 +122,13 @@ public class Authentication extends Activity {
             builder.setOAuthConsumerKey(Token.CONSUMER_KEY);
             builder.setOAuthConsumerSecret(Token.CONSUMER_SECRET);
 
-            String access_token = preferences.getString(PREF_KEY_OAUTH_TOKEN, "");
-            String access_token_secret = preferences.getString(PREF_KEY_OAUTH_SECRET, "");
+            String access_token = getPreferences(MODE_PRIVATE).getString(PREF_KEY_OAUTH_TOKEN, "");
+            String access_token_secret = getPreferences(MODE_PRIVATE).getString(PREF_KEY_OAUTH_SECRET, "");
 
             AccessToken accessToken = new AccessToken(access_token, access_token_secret);
             Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
 
-            //twitter4j.Status response = twitter.updateStatus("XXXXXXXXXXXXXXXXX");
+//TESR TWEET   twitter4j.Status response = twitter.updateStatus("XXXXXXXXXXXXXXXXX");
 
         } catch (Exception e) {
             e.printStackTrace();
