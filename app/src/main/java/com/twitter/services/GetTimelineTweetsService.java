@@ -22,7 +22,8 @@ import twitter4j.conf.ConfigurationBuilder;
  * Created by juzer_000 on 11/27/2014.
  */
 public class GetTimelineTweetsService extends IntentService {
-    public static final String TAG = "GetTimelineTweetsService";
+    public static final String TAG = "GetTimelineTweetService";
+    public static List<Status> statuses = null;
 
     public GetTimelineTweetsService() {
         super(TAG);
@@ -55,15 +56,16 @@ public class GetTimelineTweetsService extends IntentService {
             AccessToken accessToken = new AccessToken(access_token, access_secret);
             Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
             //twitter4j.Status response = twitter.updateStatus("YYYY");
-            List<Status> statuses = twitter.getHomeTimeline(new Paging(200));
-            Log.e("d", "sdsadasdadasdasdasdsada");
+            statuses = twitter.getHomeTimeline();
             for(Status status: statuses) {
-                Log.i(TAG, status.getUser() + "---" + status.getText());
+                Log.i(TAG, status.getUser() + "--" + status.getText());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.e("d", "sdsadasdadasdasdasdsada");
+    }
 
+    public static List<Status> getTweetsList() {
+        return statuses;
     }
 }
