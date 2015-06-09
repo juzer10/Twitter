@@ -1,4 +1,8 @@
-package com.twitter.data;
+// DEPRECATED
+
+
+
+/*package com.twitter.data;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,10 +13,11 @@ import com.twitter.models.TweetData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+*/
 /**
  * Created by juzer_000 on 11/26/2014.
  */
+/*
 public class HomeDataSource {
     private SQLiteDatabase database;
     private HomeSQLiteOpenHelper dbHelper;
@@ -62,3 +67,5 @@ public class HomeDataSource {
         return tweetData;
     }
 }
+
+*/

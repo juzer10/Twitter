@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.twitter.Authentication;
+import com.twitter.data.HomeSQLiteOpenHelper;
 import com.twitter.models.Token;
 
 import java.util.List;
@@ -23,6 +24,7 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class GetTimelineTweetsService extends IntentService {
     public static final String TAG = "GetTimelineTweetService";
+    HomeSQLiteOpenHelper db = new HomeSQLiteOpenHelper(this);
     public static List<Status> statuses = null;
 
     public GetTimelineTweetsService() {
@@ -58,7 +60,9 @@ public class GetTimelineTweetsService extends IntentService {
             //twitter4j.Status response = twitter.updateStatus("YYYY");
             statuses = twitter.getHomeTimeline();
             for(Status status: statuses) {
-                Log.i(TAG, status.getUser() + "--" + status.getText());
+                Log.i(TAG, status.getUser().getName() + "--" + status.getText());
+                db.addTweet(status.getUser().getName(), status.getText());
+
             }
         } catch (Exception e) {
             e.printStackTrace();
