@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.twitter.Authentication;
-import com.twitter.data.HomeSQLiteOpenHelper;
+import com.twitter.data.TweetsSQLiteOpenHelper;
 import com.twitter.models.Token;
 
 import java.util.List;
@@ -24,8 +24,9 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class GetTimelineTweetsService extends IntentService {
     public static final String TAG = "GetTimelineTweetService";
-    HomeSQLiteOpenHelper db = new HomeSQLiteOpenHelper(this);
+    TweetsSQLiteOpenHelper db = new TweetsSQLiteOpenHelper(this);
     public static List<Status> statuses = null;
+    public long lastTweet;
 
     public GetTimelineTweetsService() {
         super(TAG);
@@ -45,11 +46,11 @@ public class GetTimelineTweetsService extends IntentService {
     public void fetchTweets() {
         try {
             SharedPreferences pref = this.getSharedPreferences("Twitter", Context.MODE_PRIVATE);
-
+            SharedPreferences.Editor prefEditor = pref.edit();
+            lastTweet = pref.getLong("Status", 1);
             ConfigurationBuilder builder = new ConfigurationBuilder();
             String access_token = pref.getString(Authentication.PREF_KEY_OAUTH_TOKEN, "");
             String access_secret = pref.getString(Authentication.PREF_KEY_OAUTH_SECRET, "");
-           // Log.e("fadfadf", access_secret + "-------" + access_secret);
             builder.setOAuthConsumerKey(Token.CONSUMER_KEY);
             builder.setOAuthConsumerSecret(Token.CONSUMER_SECRET);
             builder.setOAuthAccessToken(access_token);
@@ -58,11 +59,15 @@ public class GetTimelineTweetsService extends IntentService {
             AccessToken accessToken = new AccessToken(access_token, access_secret);
             Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
             //twitter4j.Status response = twitter.updateStatus("YYYY");
-            statuses = twitter.getHomeTimeline();
-            for(Status status: statuses) {
-                Log.i(TAG, status.getUser().getName() + "--" + status.getText());
-                db.addTweet(status.getUser().getName(), status.getText());
-
+            statuses = twitter.getHomeTimeline(new Paging(1, 5, lastTweet));
+            for(int i = statuses.size() - 1; i >= 0; i--)
+            {
+                Log.i(TAG, statuses.get(i).getCreatedAt().toString() + "--" + statuses.get(i).getText());
+                db.addTweet(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getUser().getMiniProfileImageURL());
+                if (i == 0) {
+                    prefEditor.putLong("Status", statuses.get(i).getId());
+                    prefEditor.apply();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -20,14 +20,14 @@ import java.util.List;
 /*
 public class HomeDataSource {
     private SQLiteDatabase database;
-    private HomeSQLiteOpenHelper dbHelper;
-    private String[] allColumns = {HomeSQLiteOpenHelper.COLUMN_ID, HomeSQLiteOpenHelper.COLUMN_USERNAME,
-            HomeSQLiteOpenHelper.COLUMN_REAL_NAME, HomeSQLiteOpenHelper.COLUMN_TWEET, HomeSQLiteOpenHelper.COLUMN_USER_IMAGE,
-            HomeSQLiteOpenHelper.COLUMN_USER_IMAGE, HomeSQLiteOpenHelper.COLUMN_TIME};
+    private TweetsSQLiteOpenHelper dbHelper;
+    private String[] allColumns = {TweetsSQLiteOpenHelper.COLUMN_ID, TweetsSQLiteOpenHelper.COLUMN_USERNAME,
+            TweetsSQLiteOpenHelper.COLUMN_REAL_NAME, TweetsSQLiteOpenHelper.COLUMN_TWEET, TweetsSQLiteOpenHelper.COLUMN_USER_IMAGE,
+            TweetsSQLiteOpenHelper.COLUMN_USER_IMAGE, TweetsSQLiteOpenHelper.COLUMN_TIME};
 
 
     public HomeDataSource(Context ctx) {
-        dbHelper = new HomeSQLiteOpenHelper(ctx);
+        dbHelper = new TweetsSQLiteOpenHelper(ctx);
     }
 
     public void open()throws SQLException {
@@ -45,7 +45,7 @@ public class HomeDataSource {
     public List<TweetData> getAllTweets() {
         List<TweetData> tweetDataList = new ArrayList<TweetData>();
 
-        Cursor cursor = database.query(HomeSQLiteOpenHelper.TABLE_NAME, allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(TweetsSQLiteOpenHelper.TABLE_NAME, allColumns, null, null, null, null, null);
 
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {

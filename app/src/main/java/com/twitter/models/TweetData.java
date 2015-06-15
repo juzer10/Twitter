@@ -1,6 +1,7 @@
 package com.twitter.models;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 /**
  * Created by juzer_000 on 11/15/2014.
@@ -9,14 +10,14 @@ public class TweetData {
     private String username;
     private String realName;
     private String tweet;
-    private int userImage; //todo
+    private String userImage; //todo
     private String time;
 
     public TweetData() {
 
     }
 
-    public TweetData(String username, String realName, String tweet, int userImage, String time) {
+    public TweetData(String username, String realName, String tweet, String userImage, String time) {
         this.realName = realName;
         this.username = username;
         this.tweet = tweet;
@@ -32,11 +33,11 @@ public class TweetData {
         this.time = time;
     }
 
-    public int getUserImage() {
+    public String getUserImage() {
         return userImage;
     }
 
-    public void setUserImage(int userImage) {
+    public void setUserImage(String userImage) {
         this.userImage = userImage;
     }
 

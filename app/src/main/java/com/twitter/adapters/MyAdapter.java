@@ -30,7 +30,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
-            userImage = (ImageView) itemLayoutView.findViewById(R.id.user_image);
+           // userImage = (ImageView) itemLayoutView.findViewById(R.id.user_image);
             realName = (TextView) itemLayoutView.findViewById(R.id.real_name);
             username = (TextView) itemLayoutView.findViewById(R.id.username);
             tweet = (TextView) itemLayoutView.findViewById(R.id.tweet);
@@ -48,7 +48,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        viewHolder.userImage.setImageResource(mDataSet[position].getUserImage());
+        //viewHolder.userImage.setImageResource(mDataSet[position].getUserImage());
         viewHolder.username.setText(mDataSet[position].getUsername());
         viewHolder.realName.setText(mDataSet[position].getRealName());
         viewHolder.tweet.setText(mDataSet[position].getTweet());
