@@ -3,6 +3,8 @@ package com.twitter.models;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.twitter.utils.DateTimeConverter;
+
 /**
  * Created by juzer_000 on 11/15/2014.
  */
@@ -29,7 +31,8 @@ public class TweetData {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(String date) {
+        String time = DateTimeConverter.DateToMinutes(date);
         this.time = time;
     }
 
@@ -46,7 +49,7 @@ public class TweetData {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = "@"+username;
     }
 
     public String getRealName() {

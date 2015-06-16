@@ -51,7 +51,13 @@ public class Authentication extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-//        SharedPreferences.Editor editor = preferences.edit();
+        SharedPreferences pref = this.getSharedPreferences("Twitter", Context.MODE_PRIVATE);
+         boolean firstTime = pref.getBoolean("FirstTime", false);
+        if (firstTime)
+        {
+            Intent i = new Intent(Authentication.this, TweetList.class);
+            startActivity(i);
+        }
   //      editor.putString("CONSUMER_KEY", CONSUMER_KEY);
     //    editor.putString("CONSUMER_SECRET", CONSUMER_SECRET);
       //  editor.commit();
@@ -169,6 +175,10 @@ public class Authentication extends Activity {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             //super.onPostExecute(aBoolean);
+            SharedPreferences pref = getSharedPreferences("Twitter", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("FirstTime", true);
+            editor.apply();
             mWebView.setVisibility(View.GONE);
             Intent i = new Intent(Authentication.this, TweetList.class);
             startActivity(i);

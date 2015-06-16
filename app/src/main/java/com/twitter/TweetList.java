@@ -35,16 +35,17 @@ public class TweetList extends Activity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new MyAdapter(myDataset);
+        mAdapter = new MyAdapter(myDataset, this);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("YOLO");
+    }
 
-
-
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

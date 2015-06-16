@@ -111,7 +111,7 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
         tweetData.setUsername(cursor.getString(1));
         tweetData.setRealName(cursor.getString(2));
         tweetData.setTweet(cursor.getString(3));
-       // tweetData.setUserImage(cursor.getString(4));
+        tweetData.setUserImage(cursor.getString(4));
         tweetData.setTime(cursor.getString(6));
         return tweetData;
     }

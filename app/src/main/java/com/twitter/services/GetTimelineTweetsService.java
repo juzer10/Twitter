@@ -59,11 +59,11 @@ public class GetTimelineTweetsService extends IntentService {
             AccessToken accessToken = new AccessToken(access_token, access_secret);
             Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
             //twitter4j.Status response = twitter.updateStatus("YYYY");
-            statuses = twitter.getHomeTimeline(new Paging(1, 5, lastTweet));
+            statuses = twitter.getHomeTimeline(new Paging(1, 200, lastTweet));
             for(int i = statuses.size() - 1; i >= 0; i--)
             {
                 Log.i(TAG, statuses.get(i).getCreatedAt().toString() + "--" + statuses.get(i).getText());
-                db.addTweet(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getUser().getMiniProfileImageURL());
+                db.addTweet(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getUser().getOriginalProfileImageURL());
                 if (i == 0) {
                     prefEditor.putLong("Status", statuses.get(i).getId());
                     prefEditor.apply();
