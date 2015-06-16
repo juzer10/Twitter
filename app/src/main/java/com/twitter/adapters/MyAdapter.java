@@ -2,6 +2,7 @@ package com.twitter.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +27,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         mContext = ctx;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView userImage;
         public TextView realName;
         public TextView username;
         public TextView tweet;
         public TextView time;
+        private String mItem;
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
@@ -40,6 +42,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             username = (TextView) itemLayoutView.findViewById(R.id.username);
             tweet = (TextView) itemLayoutView.findViewById(R.id.tweet);
             time = (TextView) itemLayoutView.findViewById(R.id.time);
+            itemLayoutView.setOnClickListener(this);
+        }
+
+        public void setItem(String item) {
+            mItem = item;
+        }
+
+        @Override
+        public void onClick(View view) {
+            //TODO call SingleTwet.class
+            Log.d("ONCLICK", getPosition() + "-" + mItem);
         }
     }
 
@@ -56,10 +69,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         String url = mDataSet[position].getUserImage();
         Context ctx = viewHolder.userImage.getContext();
         Picasso.with(ctx).load(url).into(viewHolder.userImage);
+
         viewHolder.username.setText(mDataSet[position].getUsername());
         viewHolder.realName.setText(mDataSet[position].getRealName());
         viewHolder.tweet.setText(mDataSet[position].getTweet());
         viewHolder.time.setText(mDataSet[position].getTime());
+        viewHolder.setItem(mDataSet[position].getTweet());
+
+        viewHolder.userImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                //TODO go to user profile
+            }
+        });
     }
 
 
