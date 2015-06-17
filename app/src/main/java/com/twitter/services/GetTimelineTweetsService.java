@@ -9,6 +9,7 @@ import android.util.Log;
 import com.twitter.Authentication;
 import com.twitter.data.TweetsSQLiteOpenHelper;
 import com.twitter.models.Token;
+import com.twitter.utils.TwitterInstance;
 
 import java.util.List;
 
@@ -48,22 +49,13 @@ public class GetTimelineTweetsService extends IntentService {
             SharedPreferences pref = this.getSharedPreferences("Twitter", Context.MODE_PRIVATE);
             SharedPreferences.Editor prefEditor = pref.edit();
             lastTweet = pref.getLong("Status", 1);
-            ConfigurationBuilder builder = new ConfigurationBuilder();
-            String access_token = pref.getString(Authentication.PREF_KEY_OAUTH_TOKEN, "");
-            String access_secret = pref.getString(Authentication.PREF_KEY_OAUTH_SECRET, "");
-            builder.setOAuthConsumerKey(Token.CONSUMER_KEY);
-            builder.setOAuthConsumerSecret(Token.CONSUMER_SECRET);
-            builder.setOAuthAccessToken(access_token);
-            builder.setOAuthAccessTokenSecret(access_secret);
 
-            AccessToken accessToken = new AccessToken(access_token, access_secret);
-            Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
-            //twitter4j.Status response = twitter.updateStatus("YYYY");
+            Twitter twitter = TwitterInstance.getTwitterInstance(this);
             statuses = twitter.getHomeTimeline(new Paging(1, 200, lastTweet));
             for(int i = statuses.size() - 1; i >= 0; i--)
             {
                 Log.i(TAG, statuses.get(i).getCreatedAt().toString() + "--" + statuses.get(i).getText());
-                db.addTweet(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getUser().getOriginalProfileImageURL());
+                db.addTweet(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getUser().getOriginalProfileImageURL(), statuses.get(i).getId());
                 if (i == 0) {
                     prefEditor.putLong("Status", statuses.get(i).getId());
                     prefEditor.apply();

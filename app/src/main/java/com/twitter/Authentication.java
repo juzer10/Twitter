@@ -50,18 +50,6 @@ public class Authentication extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
-
-        SharedPreferences pref = this.getSharedPreferences("Twitter", Context.MODE_PRIVATE);
-         boolean firstTime = pref.getBoolean("FirstTime", false);
-        if (firstTime)
-        {
-            Intent i = new Intent(Authentication.this, TweetList.class);
-            startActivity(i);
-        }
-  //      editor.putString("CONSUMER_KEY", CONSUMER_KEY);
-    //    editor.putString("CONSUMER_SECRET", CONSUMER_SECRET);
-      //  editor.commit();
-
         signInTwitter = (Button) findViewById(R.id.button_sign_in);
         mWebView = (WebView) findViewById(R.id.twitter_browser);
 
@@ -118,7 +106,7 @@ public class Authentication extends Activity {
             SharedPreferences.Editor e = preferences.edit();
             e.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
             e.putString(PREF_KEY_OAUTH_SECRET, accessToken.getTokenSecret());
-            // e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
+            e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
             e.apply();
 
 

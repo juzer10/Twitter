@@ -20,18 +20,19 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TWEET = "tweet";
     public static final String COLUMN_TIME = "time"; //todo how to store time
     public static final String COLUMN_USER_IMAGE = "user_image"; //todo how to store image
+    public static final String COLUMN_STATUS_ID = "status_id";
 
     private static final String DATABASE_NAME = "home.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
     private String[] allColumns = {TweetsSQLiteOpenHelper.COLUMN_ID, TweetsSQLiteOpenHelper.COLUMN_USERNAME,
             TweetsSQLiteOpenHelper.COLUMN_REAL_NAME, TweetsSQLiteOpenHelper.COLUMN_TWEET, TweetsSQLiteOpenHelper.COLUMN_USER_IMAGE,
-            TweetsSQLiteOpenHelper.COLUMN_USER_IMAGE, TweetsSQLiteOpenHelper.COLUMN_TIME};
+            TweetsSQLiteOpenHelper.COLUMN_USER_IMAGE, TweetsSQLiteOpenHelper.COLUMN_TIME, TweetsSQLiteOpenHelper.COLUMN_STATUS_ID};
 
     private static final String DATABASE_CREATE = "create table if not exists " + TABLE_NAME + "(" + COLUMN_ID +
             " int primary key, " + COLUMN_USERNAME + " text not null, " + COLUMN_REAL_NAME +
-            " text, " + COLUMN_TWEET + " text, " + COLUMN_USER_IMAGE + " text, " + COLUMN_TIME +" text);";
+            " text, " + COLUMN_TWEET + " text, " + COLUMN_USER_IMAGE + " text, " + COLUMN_TIME +" text, " + COLUMN_STATUS_ID +" int);";
 
 
         public TweetsSQLiteOpenHelper(Context context) {
@@ -68,7 +69,7 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
     CRUD Operations
      */
 
-    public void addTweet(String realName, String username, String tweet, String time, String userImage) {
+    public void addTweet(String realName, String username, String tweet, String time, String userImage, long statusID) {
         //TODO How to send and receive a Tweet
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -76,8 +77,8 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME, username);
         values.put(COLUMN_TWEET, tweet);
         values.put(COLUMN_TIME, time);
-        Log.w("TIMEw", time);
         values.put(COLUMN_USER_IMAGE, userImage);
+        values.put(COLUMN_STATUS_ID, statusID);
         db.insert(TABLE_NAME, null, values);
         db.close();
     }
@@ -113,6 +114,7 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
         tweetData.setTweet(cursor.getString(3));
         tweetData.setUserImage(cursor.getString(4));
         tweetData.setTime(cursor.getString(6));
+        tweetData.setStatusID(cursor.getLong(cursor.getColumnIndex("status_id")));
         return tweetData;
     }
 }

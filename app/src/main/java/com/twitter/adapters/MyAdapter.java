@@ -1,6 +1,7 @@
 package com.twitter.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.twitter.R;
+import com.twitter.SingleTweet;
 import com.twitter.TweetList;
 import com.twitter.models.TweetData;
 
@@ -33,26 +35,31 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public TextView username;
         public TextView tweet;
         public TextView time;
-        private String mItem;
+        private long mItem;
+        private Context mCtx;
 
-        public ViewHolder(View itemLayoutView) {
+        public ViewHolder(View itemLayoutView, Context ctx) {
             super(itemLayoutView);
             userImage = (ImageView) itemLayoutView.findViewById(R.id.user_image);
             realName = (TextView) itemLayoutView.findViewById(R.id.real_name);
             username = (TextView) itemLayoutView.findViewById(R.id.username);
             tweet = (TextView) itemLayoutView.findViewById(R.id.tweet);
             time = (TextView) itemLayoutView.findViewById(R.id.time);
+            mCtx = ctx;
             itemLayoutView.setOnClickListener(this);
         }
 
-        public void setItem(String item) {
+        public void setItem(long item) {
             mItem = item;
         }
 
         @Override
         public void onClick(View view) {
-            //TODO call SingleTwet.class
-            Log.d("ONCLICK", getPosition() + "-" + mItem);
+            //TODO call SingleTweet.class
+            Intent i = new Intent(mCtx, SingleTweet.class);
+            i.putExtra("id", mItem);
+            mCtx.startActivity(i);
+            //Log.d("ONCLICK", getPosition() + "-" + mItem);
         }
     }
 
@@ -60,7 +67,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayout = LayoutInflater.from(parent.getContext()).inflate(R.layout.tweet_layout, null);
 
-        ViewHolder viewHolder = new ViewHolder(itemLayout);
+        ViewHolder viewHolder = new ViewHolder(itemLayout, mContext);
         return viewHolder;
     }
 
@@ -74,7 +81,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         viewHolder.realName.setText(mDataSet[position].getRealName());
         viewHolder.tweet.setText(mDataSet[position].getTweet());
         viewHolder.time.setText(mDataSet[position].getTime());
-        viewHolder.setItem(mDataSet[position].getTweet());
+
+        viewHolder.setItem(mDataSet[position].getStatusID());
 
         viewHolder.userImage.setOnClickListener(new View.OnClickListener() {
 
@@ -84,7 +92,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             }
         });
     }
-
 
     @Override
     public int getItemCount() {

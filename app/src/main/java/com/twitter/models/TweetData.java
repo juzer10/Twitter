@@ -14,17 +14,27 @@ public class TweetData {
     private String tweet;
     private String userImage; //todo
     private String time;
+    private long statusID;
 
     public TweetData() {
 
     }
 
-    public TweetData(String username, String realName, String tweet, String userImage, String time) {
+    public TweetData(String username, String realName, String tweet, String userImage, String time, long statusID) {
         this.realName = realName;
         this.username = username;
         this.tweet = tweet;
         this.userImage = userImage;
         this.time = time;
+        this.statusID = statusID;
+    }
+
+    public long getStatusID() {
+        return statusID;
+    }
+
+    public void setStatusID(long statusID) {
+        this.statusID = statusID;
     }
 
     public String getTime() {

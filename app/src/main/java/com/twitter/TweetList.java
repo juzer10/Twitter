@@ -1,7 +1,9 @@
 package com.twitter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +27,15 @@ public class TweetList extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences pref = this.getSharedPreferences("Twitter", Context.MODE_PRIVATE);
+        boolean firstTime = pref.getBoolean("FirstTime", false);
+
+        if(!firstTime)
+        {
+            Intent i = new Intent(TweetList.this, Authentication.class);
+            startActivity(i);
+        }
+
         Intent i = new Intent(TweetList.this, GetTimelineTweetsService.class);
         startService(i);
         setContentView(R.layout.activity_tweet_list);
@@ -41,7 +52,7 @@ public class TweetList extends Activity {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("YOLO");
+        toolbar.setTitle("Twitter");
     }
 
     @Override
