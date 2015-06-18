@@ -22,10 +22,10 @@ public class TweetData {
 
     public TweetData(String username, String realName, String tweet, String userImage, String time, long statusID) {
         this.realName = realName;
-        this.username = username;
+        setUsername(username);
         this.tweet = tweet;
         this.userImage = userImage;
-        this.time = time;
+        setTime(time);
         this.statusID = statusID;
     }
 

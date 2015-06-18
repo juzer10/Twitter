@@ -1,35 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/in_reply_to"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:scrollbars = "vertical"
+    android:scrollbarStyle="insideInset"
+    >
 
-    <RelativeLayout
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/user_image"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:scaleType="fitXY"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+        <include layout="@layout/toolbar"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/in_reply_to"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             />
 
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            >
+
+            <ImageView
+                android:id="@+id/user_image"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:scaleType="fitXY"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                />
+
+            <TextView
+                android:id="@+id/real_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp"
+                android:layout_toRightOf="@id/user_image"
+                android:layout_toEndOf="@id/user_image"
+                />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_below="@id/real_name"
+                android:layout_toRightOf="@id/user_image"
+                android:layout_toEndOf="@id/user_image"
+                android:textSize="15sp"
+                />
+
+            <TextView
+                android:id="@+id/tweet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/user_image"
+                android:textSize="18sp"
+                />
+
+        </RelativeLayout>
 
 
-    <android.support.v7.widget.RecyclerView
+  <!-- <android.support.v7.widget.RecyclerView
         android:id="@+id/replies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
-
-</LinearLayout>
+-->
+    </LinearLayout>
+</ScrollView>
