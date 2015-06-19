@@ -33,6 +33,7 @@ public class SingleTweet extends Activity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private String TAG = "SingleTweet";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +44,14 @@ public class SingleTweet extends Activity {
         Twitter twitter = TwitterInstance.getTwitterInstance(this);
         twitter4j.Status status = null;
         try {
-            status = new GetTweetTask().execute(twitter, statusID).get();
-            //twitter4j.Status status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, statusID).get();
+            //status = new GetTweetTask().execute(twitter, statusID).get();
+            status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, statusID).get();
         } catch(Exception e) {e.printStackTrace();}
         TweetData[] inReplyTo = fetchInReplyTo(status);
-        mRecyclerView = (RecyclerView) findViewById(R.id.in_reply_to);
+        mRecyclerView = (RecyclerView) findViewById(R.id.replies);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
+        Log.w(TAG, "Setting View");
         mAdapter = new MyAdapter(inReplyTo, this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -67,8 +68,8 @@ public class SingleTweet extends Activity {
         TextView tweet = (TextView) findViewById(R.id.tweet);
         tweet.setText(status.getText());
 
-        ScrollView sv = (ScrollView)findViewById(R.id.scrollView);
-        sv.scrollTo(0, userImage.getScrollY());
+        //ScrollView sv = (ScrollView)findViewById(R.id.scrollView);
+        //sv.scrollTo(0, userImage.getScrollY());
     }
 
     protected TweetData[] fetchInReplyTo(Status status) {
@@ -77,7 +78,7 @@ public class SingleTweet extends Activity {
         while(status.getInReplyToScreenName() != null) {
             try {
                 Log.w("REPLY", status.getInReplyToScreenName());
-                status = new GetTweetTask().execute(twitter, status.getInReplyToStatusId()).get();
+                status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, status.getInReplyToStatusId()).get();
                 inReplyTo.add(new TweetData(status.getUser().getScreenName(), status.getUser().getName(), status.getText(), status.getUser().getOriginalProfileImageURL(), status.getCreatedAt().toString(), status.getId()));
 
             } catch (InterruptedException e) {
@@ -88,6 +89,7 @@ public class SingleTweet extends Activity {
         }
         TweetData[] reply = new TweetData[inReplyTo.size()];
         inReplyTo.toArray(reply);
+        Log.w(TAG, "Got Replies");
         return reply;
     }
 
