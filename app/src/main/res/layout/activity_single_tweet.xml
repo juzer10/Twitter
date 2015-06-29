@@ -10,20 +10,20 @@
     android:scrollbarStyle="insideInset"
     >
 -->
-    <LinearLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
         <include layout="@layout/toolbar"/>
-      <!--  <android.support.v7.widget.RecyclerView
+
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/in_reply_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
--->
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -69,6 +69,7 @@
                 android:layout_toRightOf="@id/user_image"
                 android:layout_toEndOf="@id/user_image"
                 android:textSize="15sp"
+
                 />
 
             <TextView
@@ -80,13 +81,13 @@
                 android:textSize="18sp"
                 />
 
-        </RelativeLayout>
+    </RelativeLayout>
 
 
-    <android.support.v7.widget.RecyclerView
+   <!-- <android.support.v7.widget.RecyclerView
         android:id="@+id/replies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        /> -->
 
 </LinearLayout>

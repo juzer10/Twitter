@@ -48,13 +48,10 @@ public class SingleTweet extends Activity {
             status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, statusID).get();
         } catch(Exception e) {e.printStackTrace();}
         TweetData[] inReplyTo = fetchInReplyTo(status);
-        mRecyclerView = (RecyclerView) findViewById(R.id.replies);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        Log.w(TAG, "Setting View");
-        mAdapter = new MyAdapter(inReplyTo, this);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        Log.w(TAG, "" + inReplyTo.length);
+
+
+
 
         ImageView userImage = (ImageView) findViewById(R.id.user_image);
         Picasso.with(this).load(status.getUser().getBiggerProfileImageURL()).into(userImage);
@@ -63,11 +60,19 @@ public class SingleTweet extends Activity {
         realName.setText(status.getUser().getName());
 
         TextView username = (TextView) findViewById(R.id.username);
-        username.setText("@"+status.getUser().getScreenName());
+        username.setText("@" + status.getUser().getScreenName());
 
         TextView tweet = (TextView) findViewById(R.id.tweet);
         tweet.setText(status.getText());
-
+        mRecyclerView = (RecyclerView) findViewById(R.id.in_reply_to);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        if(inReplyTo.length != 0)
+        {
+            mAdapter = new MyAdapter(inReplyTo, this);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        }
         //ScrollView sv = (ScrollView)findViewById(R.id.scrollView);
         //sv.scrollTo(0, userImage.getScrollY());
     }
