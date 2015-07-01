@@ -1,12 +1,14 @@
 package com.twitter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -22,9 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import twitter4j.Paging;
+import twitter4j.Query;
+import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 
 /**
  * Created by juzer on 6/16/2015.
@@ -47,10 +53,19 @@ public class SingleTweet extends Activity {
             //status = new GetTweetTask().execute(twitter, statusID).get();
             status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, statusID).get();
         } catch(Exception e) {e.printStackTrace();}
+        /*  TODO Better display of conversation
         TweetData[] inReplyTo = fetchInReplyTo(status);
         Log.w(TAG, "" + inReplyTo.length);
-
-
+        mRecyclerView = (RecyclerView) findViewById(R.id.in_reply_to);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        if(inReplyTo.length != 0)
+        {
+            mAdapter = new MyAdapter(inReplyTo, this);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        }
+        */
 
 
         ImageView userImage = (ImageView) findViewById(R.id.user_image);
@@ -64,17 +79,19 @@ public class SingleTweet extends Activity {
 
         TextView tweet = (TextView) findViewById(R.id.tweet);
         tweet.setText(status.getText());
-        mRecyclerView = (RecyclerView) findViewById(R.id.in_reply_to);
+
+        ImageButton favoriteButton = (ImageButton) findViewById(R.id.favorite_button);
+
+
+        TweetData[] replies = fetchReplies(status);
+        mRecyclerView = (RecyclerView) findViewById(R.id.replies);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        if(inReplyTo.length != 0)
-        {
-            mAdapter = new MyAdapter(inReplyTo, this);
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        }
-        //ScrollView sv = (ScrollView)findViewById(R.id.scrollView);
-        //sv.scrollTo(0, userImage.getScrollY());
+        mAdapter = new MyAdapter(replies, this);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
     }
 
     protected TweetData[] fetchInReplyTo(Status status) {
@@ -98,7 +115,25 @@ public class SingleTweet extends Activity {
         return reply;
     }
 
+    protected TweetData[] fetchReplies(Status status) {
+        ArrayList<TweetData> replies = new ArrayList<TweetData>();
+        try {
+            List<twitter4j.Status> statuses = new GetRepliesTask().execute("@"+status.getUser().getScreenName(), this).get();
+            for (int i = statuses.size()-1; i >= 0; i--) {
+                if(statuses.get(i).getInReplyToStatusId() == status.getId()) {
+                    Log.e("STATUSES", statuses.get(i).getText());
+                    replies.add(new TweetData(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getUser().getOriginalProfileImageURL(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getId()));
+                }
 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        TweetData[] reply = new TweetData[replies.size()];
+        replies.toArray(reply);
+        Log.w(TAG, "Got Replies");
+        return reply;
+    }
     private class GetTweetTask extends AsyncTask<Object, Void, twitter4j.Status> {
         @Override
         protected twitter4j.Status doInBackground(Object... params ) {
@@ -110,6 +145,23 @@ public class SingleTweet extends Activity {
             } catch(TwitterException e) {e.printStackTrace();}
 
             return status;
+        }
+    }
+
+    private class GetRepliesTask extends AsyncTask<Object, Void,  List <twitter4j.Status>> {
+        @Override
+        protected List <twitter4j.Status> doInBackground(Object... params) {
+            QueryResult results = null;
+            Context ctx = (Context) params[1];
+            String username = (String) params[0];
+            try {
+                Twitter twitter = TwitterInstance.getTwitterInstance(ctx);
+                Query query = new Query(username);
+                query.setCount(500);
+                results = twitter.search(query);
+            } catch(Exception e){e.printStackTrace();}
+            List <twitter4j.Status> statuses = results.getTweets();
+            return statuses;
         }
     }
 }
