@@ -9,6 +9,9 @@ import android.util.Log;
 
 import com.twitter.models.TweetData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by juzer_000 on 11/23/2014.
  */
@@ -83,17 +86,20 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public TweetData[] getAllTweets() {
-        //List<TweetData> tweetDataList = new ArrayList<TweetData>();
+    public List<TweetData> getAllTweets() {
+        Log.e("", "Get Tweets");
+        List<TweetData> tweetDataList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(TweetsSQLiteOpenHelper.TABLE_NAME, allColumns, null, null, null, null, null);
-        TweetData[] tweetDataList = new TweetData[cursor.getCount()];
+      //  TweetData[] tweetDataList = new TweetData[cursor.getCount()];
         cursor.moveToLast();
 
-        for(int i = 0; i < cursor.getCount(); i++)
+        int tweetCount = cursor.getCount()<200? cursor.getCount() : 200;
+
+        for(int i = 0; i < tweetCount; i++)
         {
             TweetData tweetData = cursorToTweetData(cursor);
-            tweetDataList[i] = tweetData;
+            tweetDataList.add(i, tweetData);
             cursor.moveToPrevious();
         }
 

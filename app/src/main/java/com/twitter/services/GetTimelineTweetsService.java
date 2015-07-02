@@ -40,8 +40,8 @@ public class GetTimelineTweetsService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.i(TAG, "In service");
         fetchTweets();
+        Log.e(TAG, "END SERVICE");
     }
 
     public void fetchTweets() {

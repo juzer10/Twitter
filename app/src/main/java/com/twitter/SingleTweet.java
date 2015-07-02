@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -83,7 +82,7 @@ public class SingleTweet extends Activity {
         ImageButton favoriteButton = (ImageButton) findViewById(R.id.favorite_button);
 
 
-        TweetData[] replies = fetchReplies(status);
+        List <TweetData> replies = fetchReplies(status);
         mRecyclerView = (RecyclerView) findViewById(R.id.replies);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -94,7 +93,7 @@ public class SingleTweet extends Activity {
 
     }
 
-    protected TweetData[] fetchInReplyTo(Status status) {
+    protected List<TweetData> fetchInReplyTo(Status status) {
         Twitter twitter = TwitterInstance.getTwitterInstance(this);
         ArrayList<TweetData> inReplyTo = new ArrayList<TweetData>();
         while(status.getInReplyToScreenName() != null) {
@@ -109,14 +108,12 @@ public class SingleTweet extends Activity {
                 e.printStackTrace();
             }
         }
-        TweetData[] reply = new TweetData[inReplyTo.size()];
-        inReplyTo.toArray(reply);
         Log.w(TAG, "Got Replies");
-        return reply;
+        return inReplyTo;
     }
 
-    protected TweetData[] fetchReplies(Status status) {
-        ArrayList<TweetData> replies = new ArrayList<TweetData>();
+    protected List<TweetData> fetchReplies(Status status) {
+        List<TweetData> replies = new ArrayList<>();
         try {
             List<twitter4j.Status> statuses = new GetRepliesTask().execute("@"+status.getUser().getScreenName(), this).get();
             for (int i = statuses.size()-1; i >= 0; i--) {
@@ -129,10 +126,8 @@ public class SingleTweet extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        TweetData[] reply = new TweetData[replies.size()];
-        replies.toArray(reply);
         Log.w(TAG, "Got Replies");
-        return reply;
+        return replies;
     }
     private class GetTweetTask extends AsyncTask<Object, Void, twitter4j.Status> {
         @Override

@@ -16,15 +16,18 @@ import com.twitter.SingleTweet;
 import com.twitter.TweetList;
 import com.twitter.models.TweetData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by juzer_000 on 11/14/2014.
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private TweetData[] mDataSet;
+    private List<TweetData> mDataSet;
     Context mContext;
 
-    public MyAdapter(TweetData[] dataSet, Context ctx) {
+    public MyAdapter(List<TweetData> dataSet, Context ctx) {
         mDataSet = dataSet;
         mContext = ctx;
     }
@@ -55,7 +58,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         @Override
         public void onClick(View view) {
-            //TODO call SingleTweet.class
             Intent i = new Intent(mCtx, SingleTweet.class);
             i.putExtra("id", mItem);
             mCtx.startActivity(i);
@@ -73,7 +75,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        String url = mDataSet[position].getUserImage();
+        String url = mDataSet.get(position).getUserImage();
+        Context ctx = viewHolder.userImage.getContext();
+        Picasso.with(ctx).load(url).into(viewHolder.userImage);
+
+        viewHolder.username.setText(mDataSet.get(position).getUsername());
+        viewHolder.realName.setText(mDataSet.get(position).getRealName());
+        viewHolder.tweet.setText(mDataSet.get(position).getTweet());
+        viewHolder.time.setText(mDataSet.get(position).getTime());
+        viewHolder.setItem(mDataSet.get(position).getStatusID());
+
+
+       /*
+        String url = mDataSet.[position].getUserImage();
         Context ctx = viewHolder.userImage.getContext();
         Picasso.with(ctx).load(url).into(viewHolder.userImage);
 
@@ -83,6 +97,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         viewHolder.time.setText(mDataSet[position].getTime());
 
         viewHolder.setItem(mDataSet[position].getStatusID());
+        */
 
         viewHolder.userImage.setOnClickListener(new View.OnClickListener() {
 
@@ -95,7 +110,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mDataSet.length;
+        return mDataSet.size();
     }
 }
 
