@@ -73,7 +73,6 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
      */
 
     public void addTweet(String realName, String username, String tweet, String time, String userImage, long statusID) {
-        //TODO How to send and receive a Tweet
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_REAL_NAME, realName);
@@ -93,8 +92,8 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TweetsSQLiteOpenHelper.TABLE_NAME, allColumns, null, null, null, null, null);
       //  TweetData[] tweetDataList = new TweetData[cursor.getCount()];
         cursor.moveToLast();
-
-        int tweetCount = cursor.getCount()<200? cursor.getCount() : 200;
+        Log.e("DATABASE", cursor.getString(3));
+        int tweetCount = cursor.getCount()<200 ? cursor.getCount() : 200;
 
         for(int i = 0; i < tweetCount; i++)
         {

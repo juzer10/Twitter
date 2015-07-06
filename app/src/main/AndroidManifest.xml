@@ -20,7 +20,9 @@
         <activity android:name=".Authentication"/>
         <activity android:name=".SingleTweet"/>
 
-        <service android:name=".services.GetTimelineTweetsService"/>
+        <service android:name=".services.GetTimelineTweetsService"
+            android:exported="false"
+            />
     </application>
 
 </manifest>
