@@ -78,28 +78,15 @@ public class TweetList extends Activity {
                 int size = -1;
                 try {
                     size = new GetTimelineTweetsTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, mCtx).get();
-                } catch (Exception e){}
-
-
-             //   myDataset.clear();
-             //   myDataset.addAll(mDbHelper.getAllTweets());
+                } catch (Exception e){e.printStackTrace();}
 
                 if(size > 0) {
                 List<TweetData> Dataset = mDbHelper.getAllTweets().subList(0,size);
                 for(int i = 0; i<size; i++) {
                     Log.i("", Dataset.get(i).getTweet());
                     myDataset.add(i, Dataset.get(i));
-                    //mAdapter.notifyDataSetChanged();
-                    mAdapter.notifyItemInserted(i);
-                 //   mRecyclerView.scrollToPosition(0);
                 }
                 Log.e("TWEETLIST", "" + size);
-
-
-               // mRecyclerView.setAdapter(mAdapter);
-              //  mAdapter = new MyAdapter(myDataset, mCtx);
-              //  mAdapter.notifyDataSetChanged();
-                //mSwipeRefreshLayout.setRefreshing(false);
                     mRecyclerView.scrollToPosition(0);
             }
 

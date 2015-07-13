@@ -1,13 +1,17 @@
 package com.twitter;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,6 +48,18 @@ public class SingleTweet extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_tweet);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Twitter");
+        toolbar.setNavigationIcon(R.drawable.star);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "In UP button");
+
+            }
+        });
+
         Bundle bundle = getIntent().getExtras();
         long statusID = bundle.getLong("id");
         Twitter twitter = TwitterInstance.getTwitterInstance(this);
@@ -80,7 +96,6 @@ public class SingleTweet extends Activity {
         tweet.setText(status.getText());
 
         ImageButton favoriteButton = (ImageButton) findViewById(R.id.favorite_button);
-
 
         List <TweetData> replies = fetchReplies(status);
         mRecyclerView = (RecyclerView) findViewById(R.id.replies);

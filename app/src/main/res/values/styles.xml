@@ -9,9 +9,9 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="Toolbar" parent="Theme.AppCompat.Light.NoActionBar">
+  <!--  <style name="Toolbar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:background">@color/primary</item>
-    </style>
+    </style> -->
 
     <style name="TextTheme">
         <item name="android:textColor">@color/white</item>
