@@ -81,20 +81,28 @@ public class TweetList extends Activity {
                 } catch (Exception e){}
 
 
-                myDataset.clear();
-                myDataset.addAll(mDbHelper.getAllTweets());
+             //   myDataset.clear();
+             //   myDataset.addAll(mDbHelper.getAllTweets());
 
-                /*
+                if(size > 0) {
                 List<TweetData> Dataset = mDbHelper.getAllTweets().subList(0,size);
                 for(int i = 0; i<size; i++) {
-                    myDataset.add(Dataset.get(i));
+                    Log.i("", Dataset.get(i).getTweet());
+                    myDataset.add(i, Dataset.get(i));
+                    //mAdapter.notifyDataSetChanged();
+                    mAdapter.notifyItemInserted(i);
+                 //   mRecyclerView.scrollToPosition(0);
                 }
-                Log.e("TWEETLIST", ""+size);
-                */
+                Log.e("TWEETLIST", "" + size);
 
-                mRecyclerView.setAdapter(mAdapter);
-                mAdapter = new MyAdapter(myDataset, mCtx);
-                mAdapter.notifyDataSetChanged();
+
+               // mRecyclerView.setAdapter(mAdapter);
+              //  mAdapter = new MyAdapter(myDataset, mCtx);
+              //  mAdapter.notifyDataSetChanged();
+                //mSwipeRefreshLayout.setRefreshing(false);
+                    mRecyclerView.scrollToPosition(0);
+            }
+
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -123,7 +131,7 @@ public class TweetList extends Activity {
                 statuses = twitter.getHomeTimeline(new Paging(1, 200, lastTweet));
                 for(int i = statuses.size() - 1; i >= 0; i--)
                 {
-                    Log.i(TAG, statuses.get(i).getCreatedAt().toString() + "--" + statuses.get(i).getText());
+                   // Log.i(TAG, statuses.get(i).getCreatedAt().toString() + "--" + statuses.get(i).getText());
                     db.addTweet(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getUser().getOriginalProfileImageURL(), statuses.get(i).getId());
                     if (i == 0) {
                         prefEditor.putLong("Status", statuses.get(i).getId());
@@ -133,7 +141,7 @@ public class TweetList extends Activity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return statuses.size()-1;
+            return statuses.size();
         }
     }
 
