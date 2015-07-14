@@ -87,9 +87,9 @@ public class TweetList extends Activity {
                     myDataset.add(i, Dataset.get(i));
                 }
                 Log.e("TWEETLIST", "" + size);
+                    mRecyclerView.setAdapter(mAdapter);
                     mRecyclerView.scrollToPosition(0);
             }
-
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -101,7 +101,6 @@ public class TweetList extends Activity {
     }
 
     private class GetTimelineTweetsTask extends AsyncTask<Context, Void, Integer> {
-        final String TAG = "GetTimelineTweetService";
         TweetsSQLiteOpenHelper db;
         long lastTweet;
         List<twitter4j.Status> statuses = null;

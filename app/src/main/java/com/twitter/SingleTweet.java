@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +39,7 @@ import twitter4j.TwitterFactory;
 /**
  * Created by juzer on 6/16/2015.
  */
-public class SingleTweet extends Activity {
+public class SingleTweet extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -51,7 +52,10 @@ public class SingleTweet extends Activity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Twitter");
-        toolbar.setNavigationIcon(R.drawable.star);
+        //toolbar.setNavigationIcon(R.drawable.star);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+       /*
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,6 +63,8 @@ public class SingleTweet extends Activity {
 
             }
         });
+
+        */
 
         Bundle bundle = getIntent().getExtras();
         long statusID = bundle.getLong("id");
