@@ -17,6 +17,7 @@ import com.twitter.adapters.MyAdapter;
 import com.twitter.data.TweetsSQLiteOpenHelper;
 import com.twitter.models.TweetData;
 import com.twitter.services.GetTimelineTweetsService;
+import com.twitter.utils.TweetTextFormatter;
 import com.twitter.utils.TwitterInstance;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
+import uk.co.imallan.jellyrefresh.JellyRefreshLayout;
 
 
 public class TweetList extends Activity {
@@ -69,7 +71,8 @@ public class TweetList extends Activity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Twitter");
 
-        final SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+     /*   final SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -80,18 +83,59 @@ public class TweetList extends Activity {
                     size = new GetTimelineTweetsTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, mCtx).get();
                 } catch (Exception e){e.printStackTrace();}
 
-                if(size > 0) {
-                List<TweetData> Dataset = mDbHelper.getAllTweets().subList(0,size);
-                for(int i = 0; i<size; i++) {
-                    Log.i("", Dataset.get(i).getTweet());
-                    myDataset.add(i, Dataset.get(i));
-                }
-                Log.e("TWEETLIST", "" + size);
+                if(size > 0)
+                {
+                    List<TweetData> Dataset = mDbHelper.getAllTweets().subList(0,size);
+                    for(int i = 0; i<size; i++)
+                    {
+                        Log.i("", Dataset.get(i).getTweet());
+                        myDataset.add(i, Dataset.get(i));
+                    }
+                    Log.e("TWEETLIST", "" + size);
                     mRecyclerView.setAdapter(mAdapter);
                     mRecyclerView.scrollToPosition(0);
-            }
+                }
                 mSwipeRefreshLayout.setRefreshing(false);
             }
+        });
+*/
+        final JellyRefreshLayout mJellyLayout = (JellyRefreshLayout) findViewById(R.id.jelly);
+        mJellyLayout.setRefreshListener(new JellyRefreshLayout.JellyRefreshListener() {
+            @Override
+            public void onRefresh(final JellyRefreshLayout jellyRefreshLayout) {
+                //Intent i = new Intent(TweetList.this, GetTimelineTweetsService.class);
+                //startService(i);
+                jellyRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+
+               int size = -1;
+                try {
+                    size = new GetTimelineTweetsTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, mCtx).get();
+                } catch (Exception e){e.printStackTrace();}
+
+                if(size > 0)
+                {
+                    List<TweetData> Dataset = mDbHelper.getAllTweets().subList(0,size);
+                    for(int i = 0; i<size; i++)
+                    {
+                        Log.i("", Dataset.get(i).getTweet());
+                        myDataset.add(i, Dataset.get(i));
+                    }
+                    Log.e("TWEETLIST", "" + size);
+                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.scrollToPosition(0);
+
+                }
+                mJellyLayout.finishRefreshing();
+
+
+
+                }
+            },500);
+
+        }
         });
     }
 
@@ -117,8 +161,10 @@ public class TweetList extends Activity {
                 statuses = twitter.getHomeTimeline(new Paging(1, 200, lastTweet));
                 for(int i = statuses.size() - 1; i >= 0; i--)
                 {
+                    String tweetText = TweetTextFormatter.mediaFormatter(statuses.get(i));
+                    tweetText = TweetTextFormatter.linkFormatter(statuses.get(i), tweetText);
                    // Log.i(TAG, statuses.get(i).getCreatedAt().toString() + "--" + statuses.get(i).getText());
-                    db.addTweet(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getUser().getOriginalProfileImageURL(), statuses.get(i).getId());
+                    db.addTweet(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), tweetText, statuses.get(i).getCreatedAt().toString(), statuses.get(i).getUser().getOriginalProfileImageURL(), statuses.get(i).getId());
                     if (i == 0) {
                         prefEditor.putLong("Status", statuses.get(i).getId());
                         prefEditor.apply();

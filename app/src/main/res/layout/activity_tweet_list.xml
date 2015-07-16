@@ -13,11 +13,21 @@
         android:layout_height="match_parent">
 
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
+        <uk.co.imallan.jellyrefresh.JellyRefreshLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/jelly"
+            android:text="Loading"
+            android:textColor="@color/white"
+            app:jellyColor="@color/primary"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
+        <!--<android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+-->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
@@ -26,8 +36,8 @@
                 android:focusable="true"
                 android:background="@color/black"
                 tools:context=".TweetList"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
-
+    <!--    </android.support.v4.widget.SwipeRefreshLayout> -->
+</uk.co.imallan.jellyrefresh.JellyRefreshLayout>
         <ListView android:id="@+id/left_drawer"
             android:layout_width="240dp"
             android:layout_height="match_parent"

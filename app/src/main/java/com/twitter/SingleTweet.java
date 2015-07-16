@@ -16,7 +16,10 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.klinker.android.link_builder.Link;
+import com.klinker.android.link_builder.LinkBuilder;
 import com.squareup.picasso.Picasso;
 import com.twitter.adapters.MyAdapter;
 import com.twitter.models.TweetData;
@@ -27,7 +30,9 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
+import twitter4j.MediaEntity;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -35,6 +40,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.URLEntity;
 
 /**
  * Created by juzer on 6/16/2015.
@@ -44,12 +50,13 @@ public class SingleTweet extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String TAG = "SingleTweet";
+    public Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_tweet);
-
+        mContext= this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Twitter");
         //toolbar.setNavigationIcon(R.drawable.star);
@@ -87,21 +94,46 @@ public class SingleTweet extends AppCompatActivity {
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         }
         */
-
+        String mediaURL="";
+        String originalMediaURL="";
+        String linkURL = "";
+        String originalLinkURL = "";
 
         ImageView userImage = (ImageView) findViewById(R.id.user_image);
-        Picasso.with(this).load(status.getUser().getBiggerProfileImageURL()).into(userImage);
-
         TextView realName = (TextView) findViewById(R.id.real_name);
-        realName.setText(status.getUser().getName());
-
         TextView username = (TextView) findViewById(R.id.username);
-        username.setText("@" + status.getUser().getScreenName());
-
         TextView tweet = (TextView) findViewById(R.id.tweet);
-        tweet.setText(status.getText());
+        ImageView tweetImage = (ImageView) findViewById(R.id.tweet_image);
 
-        ImageButton favoriteButton = (ImageButton) findViewById(R.id.favorite_button);
+
+
+        for(URLEntity urlEntity : status.getURLEntities())
+        {
+            linkURL = urlEntity.getDisplayURL();
+            originalLinkURL = urlEntity.getURL();
+            Log.e(TAG, originalLinkURL+"---------"+linkURL);
+        }
+        for(MediaEntity mediaEntity : status.getMediaEntities())
+        {
+            mediaURL = mediaEntity.getMediaURL();
+            originalMediaURL = mediaEntity.getURL();
+          //  Log.e(TAG, originalMediaURL+"----------"+mediaURL);
+        }
+
+        String tweetText = status.getText();
+        tweetText = tweetText.replaceAll(originalMediaURL ,"");
+        tweetText = tweetText.replaceAll(originalLinkURL, linkURL);
+
+
+        Picasso.with(this).load(status.getUser().getBiggerProfileImageURL()).into(userImage);
+        realName.setText(status.getUser().getName());
+        username.setText("@" + status.getUser().getScreenName());
+        tweet.setText(tweetText);
+        MediaEntity[] mediaEntities = status.getMediaEntities();
+        if(mediaEntities.length > 0)
+            Picasso.with(mContext).load(mediaURL).into(tweetImage);
+
+     //   ImageButton favoriteButton = (ImageButton) findViewById(R.id.favorite_button);
 
         List <TweetData> replies = fetchReplies(status);
         mRecyclerView = (RecyclerView) findViewById(R.id.replies);
@@ -110,6 +142,8 @@ public class SingleTweet extends AppCompatActivity {
         mAdapter = new MyAdapter(replies, this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        new LinkBuilder(tweet).addLinks(getTweetLinks()).build();
 
 
     }
@@ -179,5 +213,32 @@ public class SingleTweet extends AppCompatActivity {
             List <twitter4j.Status> statuses = results.getTweets();
             return statuses;
         }
+    }
+
+    private List<Link> getTweetLinks() {
+        List <Link> links = new ArrayList<>();
+
+        Link mentions = new Link(Pattern.compile("@\\w{1,15}"));
+        mentions.setTextColor(getResources().getColor(R.color.primary));
+        mentions.setHighlightAlpha(.4f);
+        mentions.setOnClickListener(new Link.OnClickListener() {
+            @Override
+            public void onClick(String clickedText) {
+                Toast.makeText(mContext, clickedText, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Link hashtags = new Link(Pattern.compile("#\\w{1,139}"));
+        hashtags.setTextColor(getResources().getColor(R.color.primary));
+        hashtags.setOnClickListener(new Link.OnClickListener() {
+            @Override
+            public void onClick(String clickedText) {
+                Toast.makeText(mContext, clickedText, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        links.add(mentions);
+        links.add(hashtags);
+        return links;
     }
 }

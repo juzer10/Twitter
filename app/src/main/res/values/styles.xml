@@ -2,7 +2,7 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent = "AppTheme.Base" />
-    <style name="AppTheme.Base" parent="Theme.AppCompat">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="android:windowNoTitle">true</item>
@@ -21,6 +21,7 @@
 
     <style name="SubtleTextTheme">
         <item name="android:textColor">@color/subtle_white</item>
+        <item name = "android:fontFamily">sans-serif-light</item>
     </style>
 
 </resources>

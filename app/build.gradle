@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.twitter"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -19,6 +19,15 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
@@ -26,4 +35,6 @@ dependencies {
     compile 'org.twitter4j:twitter4j-core:4.0.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:design:22.2.0'
+    compile 'com.github.allan1st:JellyRefreshLayout:1.0.0'
+    compile 'com.klinkerapps:link_builder:1.0.6-SNAPSHOT@aar'
 }

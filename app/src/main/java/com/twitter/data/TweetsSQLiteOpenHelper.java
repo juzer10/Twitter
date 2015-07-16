@@ -92,7 +92,7 @@ public class TweetsSQLiteOpenHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TweetsSQLiteOpenHelper.TABLE_NAME, allColumns, null, null, null, null, null);
       //  TweetData[] tweetDataList = new TweetData[cursor.getCount()];
         cursor.moveToLast();
-        Log.e("DATABASE", cursor.getString(3));
+  //      Log.e("DATABASE", cursor.getString(3));
         int tweetCount = cursor.getCount()<200 ? cursor.getCount() : 200;
 
         for(int i = 0; i < tweetCount; i++)
