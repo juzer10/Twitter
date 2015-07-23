@@ -13,7 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 
-import com.twitter.models.Token;
+import com.twitter.utils.Token;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;

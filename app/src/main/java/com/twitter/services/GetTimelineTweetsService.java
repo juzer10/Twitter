@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.twitter.Authentication;
 import com.twitter.data.TweetsSQLiteOpenHelper;
-import com.twitter.models.Token;
 import com.twitter.utils.TwitterInstance;
 
 import java.util.List;
@@ -16,9 +14,6 @@ import java.util.List;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
-import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by juzer_000 on 11/27/2014.

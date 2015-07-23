@@ -2,6 +2,8 @@ package com.twitter.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -16,7 +18,9 @@ import com.twitter.R;
 import com.twitter.SingleTweet;
 import com.twitter.TweetList;
 import com.twitter.models.TweetData;
+import com.twitter.utils.Constants;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +44,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public TextView tweet;
         public TextView time;
         private long mItem;
+        private TweetData mTweetData;
         private Context mCtx;
 
         public ViewHolder(View itemLayoutView, Context ctx) {
@@ -53,14 +58,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             itemLayoutView.setOnClickListener(this);
         }
 
-        public void setItem(long item) {
+        public void setItem(long item, TweetData tweetData) {
             mItem = item;
+            mTweetData = tweetData;
         }
 
         @Override
         public void onClick(View view) {
             Intent i = new Intent(mCtx, SingleTweet.class);
-            i.putExtra("id", mItem);
+            i.putExtra(Constants.STATUS_ID, mItem);
+            i.putExtra(Constants.REAL_NAME, mTweetData.getRealName());
+            i.putExtra(Constants.USERNAME, mTweetData.getUsername());
+            i.putExtra(Constants.TIME, mTweetData.getTime());
+            i.putExtra(Constants.TWEET, mTweetData.getTweet());
+            i.putExtra(Constants.USER_IMAGE, mTweetData.getUserImage());
+
             mCtx.startActivity(i);
             //Log.d("ONCLICK", getPosition() + "-" + mItem);
         }
@@ -84,21 +96,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         viewHolder.realName.setText(mDataSet.get(position).getRealName());
         viewHolder.tweet.setText(mDataSet.get(position).getTweet());
         viewHolder.time.setText(mDataSet.get(position).getTime());
-        viewHolder.setItem(mDataSet.get(position).getStatusID());
-
-
-       /*
-        String url = mDataSet.[position].getUserImage();
-        Context ctx = viewHolder.userImage.getContext();
-        Picasso.with(ctx).load(url).into(viewHolder.userImage);
-
-        viewHolder.username.setText(mDataSet[position].getUsername());
-        viewHolder.realName.setText(mDataSet[position].getRealName());
-        viewHolder.tweet.setText(mDataSet[position].getTweet());
-        viewHolder.time.setText(mDataSet[position].getTime());
-
-        viewHolder.setItem(mDataSet[position].getStatusID());
-        */
+        viewHolder.setItem(mDataSet.get(position).getStatusID(), mDataSet.get(position));
 
         viewHolder.userImage.setOnClickListener(new View.OnClickListener() {
 

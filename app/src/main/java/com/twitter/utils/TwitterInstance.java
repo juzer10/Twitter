@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.twitter.Authentication;
-import com.twitter.models.Token;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;

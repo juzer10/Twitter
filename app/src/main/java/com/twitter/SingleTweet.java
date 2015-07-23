@@ -23,6 +23,8 @@ import com.klinker.android.link_builder.LinkBuilder;
 import com.squareup.picasso.Picasso;
 import com.twitter.adapters.MyAdapter;
 import com.twitter.models.TweetData;
+import com.twitter.utils.Constants;
+import com.twitter.utils.TweetTextFormatter;
 import com.twitter.utils.TwitterInstance;
 
 import org.w3c.dom.Text;
@@ -74,13 +76,41 @@ public class SingleTweet extends AppCompatActivity {
         */
 
         Bundle bundle = getIntent().getExtras();
-        long statusID = bundle.getLong("id");
+        long statusID = bundle.getLong(Constants.STATUS_ID);
+        String mRealName = bundle.getString(Constants.REAL_NAME);
+        String mUsername = bundle.getString(Constants.USERNAME);
+        String mUserImage = bundle.getString(Constants.USER_IMAGE);
+        String mTweet = bundle.getString(Constants.TWEET);
+        // TODO time
+
+
         Twitter twitter = TwitterInstance.getTwitterInstance(this);
         twitter4j.Status status = null;
+
+        ImageView userImage = (ImageView) findViewById(R.id.user_image);
+        TextView realName = (TextView) findViewById(R.id.real_name);
+        TextView username = (TextView) findViewById(R.id.username);
+
+        Picasso.with(this).load(mUserImage).into(userImage);
+        realName.setText(mRealName);
+        username.setText("@" + mUsername);
+
         try {
-            //status = new GetTweetTask().execute(twitter, statusID).get();
-            status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, statusID).get();
+             new GetTweetTask().execute(twitter, statusID);
+            //status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, statusID).get();
         } catch(Exception e) {e.printStackTrace();}
+
+
+/*
+        Picasso.with(this).load(status.getUser().getBiggerProfileImageURL()).into(userImage);
+        realName.setText(status.getUser().getName());
+        username.setText("@" + status.getUser().getScreenName());*/
+
+
+     //   ImageButton favoriteButton = (ImageButton) findViewById(R.id.favorite_button);
+
+
+
         /*  TODO Better display of conversation
         TweetData[] inReplyTo = fetchInReplyTo(status);
         Log.w(TAG, "" + inReplyTo.length);
@@ -94,58 +124,8 @@ public class SingleTweet extends AppCompatActivity {
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         }
         */
-        String mediaURL="";
-        String originalMediaURL="";
-        String linkURL = "";
-        String originalLinkURL = "";
 
-        ImageView userImage = (ImageView) findViewById(R.id.user_image);
-        TextView realName = (TextView) findViewById(R.id.real_name);
-        TextView username = (TextView) findViewById(R.id.username);
-        TextView tweet = (TextView) findViewById(R.id.tweet);
-        ImageView tweetImage = (ImageView) findViewById(R.id.tweet_image);
-
-
-
-        for(URLEntity urlEntity : status.getURLEntities())
-        {
-            linkURL = urlEntity.getDisplayURL();
-            originalLinkURL = urlEntity.getURL();
-            Log.e(TAG, originalLinkURL+"---------"+linkURL);
-        }
-        for(MediaEntity mediaEntity : status.getMediaEntities())
-        {
-            mediaURL = mediaEntity.getMediaURL();
-            originalMediaURL = mediaEntity.getURL();
-          //  Log.e(TAG, originalMediaURL+"----------"+mediaURL);
-        }
-
-        String tweetText = status.getText();
-        tweetText = tweetText.replaceAll(originalMediaURL ,"");
-        tweetText = tweetText.replaceAll(originalLinkURL, linkURL);
-
-
-        Picasso.with(this).load(status.getUser().getBiggerProfileImageURL()).into(userImage);
-        realName.setText(status.getUser().getName());
-        username.setText("@" + status.getUser().getScreenName());
-        tweet.setText(tweetText);
-        MediaEntity[] mediaEntities = status.getMediaEntities();
-        if(mediaEntities.length > 0)
-            Picasso.with(mContext).load(mediaURL).into(tweetImage);
-
-     //   ImageButton favoriteButton = (ImageButton) findViewById(R.id.favorite_button);
-
-        List <TweetData> replies = fetchReplies(status);
-        mRecyclerView = (RecyclerView) findViewById(R.id.replies);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyAdapter(replies, this);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        new LinkBuilder(tweet).addLinks(getTweetLinks()).build();
-
-
+        Log.e(TAG, "End of SingleTweet");
     }
 
     protected List<TweetData> fetchInReplyTo(Status status) {
@@ -184,6 +164,8 @@ public class SingleTweet extends AppCompatActivity {
         Log.w(TAG, "Got Replies");
         return replies;
     }
+
+
     private class GetTweetTask extends AsyncTask<Object, Void, twitter4j.Status> {
         @Override
         protected twitter4j.Status doInBackground(Object... params ) {
@@ -195,6 +177,34 @@ public class SingleTweet extends AppCompatActivity {
             } catch(TwitterException e) {e.printStackTrace();}
 
             return status;
+        }
+
+        @Override
+        protected void onPostExecute(twitter4j.Status status) {
+            super.onPostExecute(status);
+            TextView tweet = (TextView) findViewById(R.id.tweet);
+            String tweetText = TweetTextFormatter.linkFormatter(status, TweetTextFormatter.mediaFormatter(status));
+            tweet.setText(tweetText);
+
+
+            String mediaURL="";
+            ImageView tweetImage = (ImageView) findViewById(R.id.tweet_image);
+            MediaEntity[] mediaEntities = status.getMediaEntities();
+            mediaURL = mediaEntities[0].getMediaURL();
+            if(mediaEntities.length > 0)
+                Picasso.with(mContext).load(mediaURL).into(tweetImage);
+
+            new LinkBuilder(tweet).addLinks(getTweetLinks()).build();
+
+
+          /*  List <TweetData> replies = fetchReplies(status);
+            mRecyclerView = (RecyclerView) findViewById(R.id.replies);
+            mLayoutManager = new LinearLayoutManager(mContext);
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mAdapter = new MyAdapter(replies, mContext);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            */
         }
     }
 
