@@ -93,7 +93,7 @@ public class SingleTweet extends AppCompatActivity {
 
         Picasso.with(this).load(mUserImage).into(userImage);
         realName.setText(mRealName);
-        username.setText("@" + mUsername);
+        username.setText( mUsername);
 
         try {
              new GetTweetTask().execute(twitter, statusID);
@@ -101,6 +101,9 @@ public class SingleTweet extends AppCompatActivity {
         } catch(Exception e) {e.printStackTrace();}
 
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.replies);
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 /*
         Picasso.with(this).load(status.getUser().getBiggerProfileImageURL()).into(userImage);
         realName.setText(status.getUser().getName());
@@ -128,43 +131,6 @@ public class SingleTweet extends AppCompatActivity {
         Log.e(TAG, "End of SingleTweet");
     }
 
-    protected List<TweetData> fetchInReplyTo(Status status) {
-        Twitter twitter = TwitterInstance.getTwitterInstance(this);
-        ArrayList<TweetData> inReplyTo = new ArrayList<TweetData>();
-        while(status.getInReplyToScreenName() != null) {
-            try {
-                Log.w("REPLY", status.getInReplyToScreenName());
-                status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, status.getInReplyToStatusId()).get();
-                inReplyTo.add(new TweetData(status.getUser().getScreenName(), status.getUser().getName(), status.getText(), status.getUser().getOriginalProfileImageURL(), status.getCreatedAt().toString(), status.getId()));
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        Log.w(TAG, "Got Replies");
-        return inReplyTo;
-    }
-
-    protected List<TweetData> fetchReplies(Status status) {
-        List<TweetData> replies = new ArrayList<>();
-        try {
-            List<twitter4j.Status> statuses = new GetRepliesTask().execute("@"+status.getUser().getScreenName(), this).get();
-            for (int i = statuses.size()-1; i >= 0; i--) {
-                if(statuses.get(i).getInReplyToStatusId() == status.getId()) {
-                    Log.e("STATUSES", statuses.get(i).getText());
-                    replies.add(new TweetData(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getUser().getOriginalProfileImageURL(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getId()));
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Log.w(TAG, "Got Replies");
-        return replies;
-    }
-
 
     private class GetTweetTask extends AsyncTask<Object, Void, twitter4j.Status> {
         @Override
@@ -190,23 +156,43 @@ public class SingleTweet extends AppCompatActivity {
             String mediaURL="";
             ImageView tweetImage = (ImageView) findViewById(R.id.tweet_image);
             MediaEntity[] mediaEntities = status.getMediaEntities();
-            mediaURL = mediaEntities[0].getMediaURL();
             if(mediaEntities.length > 0)
+            {
+                mediaURL = mediaEntities[0].getMediaURL();
                 Picasso.with(mContext).load(mediaURL).into(tweetImage);
-
+            }
             new LinkBuilder(tweet).addLinks(getTweetLinks()).build();
 
-
-          /*  List <TweetData> replies = fetchReplies(status);
-            mRecyclerView = (RecyclerView) findViewById(R.id.replies);
-            mLayoutManager = new LinearLayoutManager(mContext);
-            mRecyclerView.setLayoutManager(mLayoutManager);
+Log.e(TAG, "Before RecyclerView");
+            List <TweetData> replies = fetchReplies(status);
             mAdapter = new MyAdapter(replies, mContext);
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            */
+
         }
     }
+
+
+    protected List<TweetData> fetchReplies(Status status) {
+        List<TweetData> replies = new ArrayList<>();
+        try {
+            List<twitter4j.Status> statuses = new GetRepliesTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "@" + status.getUser().getScreenName(), this).get();
+            for (int i = statuses.size()-1; i >= 0; i--) {
+                if(statuses.get(i).getInReplyToStatusId() == status.getId()) {
+                    Log.e("STATUSES", statuses.get(i).getText());
+Log.e(TAG, "Fetching Replies");
+                    replies.add(new TweetData(statuses.get(i).getUser().getName(), statuses.get(i).getUser().getScreenName(), statuses.get(i).getText(), statuses.get(i).getUser().getOriginalProfileImageURL(), statuses.get(i).getCreatedAt().toString(), statuses.get(i).getId()));
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+Log.e(TAG, "Got Replies");
+        return replies;
+    }
+
+
 
     private class GetRepliesTask extends AsyncTask<Object, Void,  List <twitter4j.Status>> {
         @Override
@@ -223,7 +209,37 @@ public class SingleTweet extends AppCompatActivity {
             List <twitter4j.Status> statuses = results.getTweets();
             return statuses;
         }
+
+        @Override
+        protected void onPostExecute(List<twitter4j.Status> statuses) {
+            super.onPostExecute(statuses);
+        }
+
     }
+
+
+
+    protected List<TweetData> fetchInReplyTo(Status status) {
+        Twitter twitter = TwitterInstance.getTwitterInstance(this);
+        ArrayList<TweetData> inReplyTo = new ArrayList<TweetData>();
+        while(status.getInReplyToScreenName() != null) {
+            try {
+                Log.w("REPLY", status.getInReplyToScreenName());
+                status = new GetTweetTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, twitter, status.getInReplyToStatusId()).get();
+                inReplyTo.add(new TweetData(status.getUser().getScreenName(), status.getUser().getName(), status.getText(), status.getUser().getOriginalProfileImageURL(), status.getCreatedAt().toString(), status.getId()));
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.w(TAG, "Got Replies");
+        return inReplyTo;
+    }
+
+
+
 
     private List<Link> getTweetLinks() {
         List <Link> links = new ArrayList<>();
