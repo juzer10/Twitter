@@ -3,6 +3,8 @@ package com.twitter;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -24,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import com.twitter.adapters.MyAdapter;
 import com.twitter.models.TweetData;
 import com.twitter.utils.Constants;
+import com.twitter.utils.Regex;
 import com.twitter.utils.TweetTextFormatter;
 import com.twitter.utils.TwitterInstance;
 
@@ -53,6 +56,7 @@ public class SingleTweet extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private String TAG = "SingleTweet";
     public Context mContext;
+    public boolean isConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,18 @@ public class SingleTweet extends AppCompatActivity {
 
         */
 
+
+        ConnectivityManager cm =
+                (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if(!isConnected)
+            Toast.makeText(mContext, "No Internet Connection Available", Toast.LENGTH_SHORT).show();
+
+
         Bundle bundle = getIntent().getExtras();
         long statusID = bundle.getLong(Constants.STATUS_ID);
         String mRealName = bundle.getString(Constants.REAL_NAME);
@@ -90,10 +106,12 @@ public class SingleTweet extends AppCompatActivity {
         ImageView userImage = (ImageView) findViewById(R.id.user_image);
         TextView realName = (TextView) findViewById(R.id.real_name);
         TextView username = (TextView) findViewById(R.id.username);
+        TextView tweet = (TextView) findViewById(R.id.tweet);
 
         Picasso.with(this).load(mUserImage).into(userImage);
         realName.setText(mRealName);
         username.setText( mUsername);
+        tweet.setText(mTweet);
 
         try {
              new GetTweetTask().execute(twitter, statusID);
@@ -136,12 +154,15 @@ public class SingleTweet extends AppCompatActivity {
         @Override
         protected twitter4j.Status doInBackground(Object... params ) {
             twitter4j.Status status = null;
-            Twitter twitter = (Twitter)params[0];
-            long statusID = (long)params[1];
-            try {
-                status = twitter.showStatus(statusID);
-            } catch(TwitterException e) {e.printStackTrace();}
-
+            if (isConnected) {
+                Twitter twitter = (Twitter) params[0];
+                long statusID = (long) params[1];
+                try {
+                    status = twitter.showStatus(statusID);
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+            }
             return status;
         }
 
@@ -149,17 +170,18 @@ public class SingleTweet extends AppCompatActivity {
         protected void onPostExecute(twitter4j.Status status) {
             super.onPostExecute(status);
             TextView tweet = (TextView) findViewById(R.id.tweet);
-            String tweetText = TweetTextFormatter.linkFormatter(status, TweetTextFormatter.mediaFormatter(status));
-            tweet.setText(tweetText);
+            if(isConnected) {
+                String tweetText = TweetTextFormatter.linkFormatter(status, TweetTextFormatter.mediaFormatter(status));
+                tweet.setText(tweetText);
 
 
-            String mediaURL="";
-            ImageView tweetImage = (ImageView) findViewById(R.id.tweet_image);
-            MediaEntity[] mediaEntities = status.getMediaEntities();
-            if(mediaEntities.length > 0)
-            {
-                mediaURL = mediaEntities[0].getMediaURL();
-                Picasso.with(mContext).load(mediaURL).into(tweetImage);
+                String mediaURL = "";
+                ImageView tweetImage = (ImageView) findViewById(R.id.tweet_image);
+                MediaEntity[] mediaEntities = status.getMediaEntities();
+                if (mediaEntities.length > 0) {
+                    mediaURL = mediaEntities[0].getMediaURL();
+                    Picasso.with(mContext).load(mediaURL).into(tweetImage);
+                }
             }
             new LinkBuilder(tweet).addLinks(getTweetLinks()).build();
 
@@ -263,8 +285,18 @@ Log.e(TAG, "Got Replies");
             }
         });
 
+        Link url = new Link(Regex.VALID_URL);
+        url.setTextColor(getResources().getColor(R.color.primary));
+        url.setOnClickListener(new Link.OnClickListener() {
+            @Override
+            public void onClick(String clickedText) {
+                Toast.makeText(mContext, clickedText, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         links.add(mentions);
         links.add(hashtags);
+        links.add(url);
         return links;
     }
 }

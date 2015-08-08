@@ -12,17 +12,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.klinker.android.link_builder.Link;
+import com.klinker.android.link_builder.LinkBuilder;
 import com.squareup.picasso.Picasso;
 import com.twitter.R;
 import com.twitter.SingleTweet;
 import com.twitter.TweetList;
 import com.twitter.models.TweetData;
 import com.twitter.utils.Constants;
+import com.twitter.utils.Regex;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
@@ -56,6 +61,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             time = (TextView) itemLayoutView.findViewById(R.id.time);
             mCtx = ctx;
             itemLayoutView.setOnClickListener(this);
+
+            new LinkBuilder(tweet).addLinks(getTweetLinks()).build();
         }
 
         public void setItem(long item, TweetData tweetData) {
@@ -110,6 +117,23 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    private static List<Link> getTweetLinks() {
+        List <Link> links = new ArrayList<>();
+
+
+        Link url = new Link(Regex.VALID_URL);
+        //url.setTextColor(getResources().getColor(R.color.primary));
+        url.setOnClickListener(new Link.OnClickListener() {
+            @Override
+            public void onClick(String clickedText) {
+                //Toast.makeText(mContext, clickedText, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        links.add(url);
+        return links;
     }
 }
 

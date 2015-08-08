@@ -73,7 +73,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_below="@id/user_image"
                 android:textSize="18sp"
-                android:autoLink="web"
                 />
 
             <ImageView
